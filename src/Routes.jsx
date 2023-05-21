@@ -1,8 +1,9 @@
 import Home from './Home';
-import Monsters from './Monsters';
-import Spells from './Spells';
 import Items from './Items';
+import Monsters from './Monsters';
 import NotFound from './NotFound';
+import Spells from './Spells';
+import Source from './Source';
 import { useRoutes } from 'react-router-dom';
 
 const Routes = () => {
@@ -17,6 +18,10 @@ const Routes = () => {
 				{
 					index: true,
 					element: <Monsters />,
+				},
+				{
+					path: ':sourceId',
+					element: <Source sourceType={'monsters'} />,
 				},
 			],
 		},

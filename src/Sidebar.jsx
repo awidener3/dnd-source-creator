@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 
 function Sidebar() {
 	return (
-		<aside className="flex flex-col h-screen p-2 border-r min-w-[200px]">
+		<aside className="flex flex-col sticky top-0 h-screen p-2 border-r min-w-[200px]">
 			<h1 className="flex text-xl">D&D Source Creator</h1>
 
 			<nav className="mt-2 flex flex-col">

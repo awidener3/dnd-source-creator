@@ -7,7 +7,7 @@ function App() {
 			<section className="flex">
 				<Sidebar />
 
-				<section className="flex flex-col flex-1 p-4">
+				<section className="flex flex-col flex-1 p-4 relative">
 					<Routes />
 				</section>
 			</section>

@@ -1,5 +1,5 @@
 import useLocalStorage from './hooks/useLocalStorage';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { sortBy } from 'lodash';
 import { Link } from 'react-router-dom';
 import {
@@ -12,6 +12,11 @@ import {
 	AiOutlineImport,
 	AiOutlineArrowDown,
 	AiOutlineArrowUp,
+	AiOutlineDown,
+	AiOutlineUp,
+	AiOutlineSearch,
+	AiOutlineNumber,
+	AiOutlineClockCircle,
 } from 'react-icons/ai';
 
 const SORTS = {
@@ -41,6 +46,7 @@ function SourceList({ sourceType }) {
 			{
 				source: null,
 				id: crypto.randomUUID(),
+				lastUpdated: new Date().toLocaleString(),
 				[sourceType.toLowerCase()]: [],
 			},
 			...sources,
@@ -52,6 +58,7 @@ function SourceList({ sourceType }) {
 			sources.map((source) => {
 				if (source.id === id) {
 					source.source = updatedSource;
+					source.lastUpdated = new Date().toLocaleString();
 				}
 				return source;
 			})
@@ -75,7 +82,11 @@ function SourceList({ sourceType }) {
 			</section>
 
 			<span className="my-2">
-				<ul>
+				<ul className="flex flex-1 items-center gap-2">
+					<li className="relative">
+						<AiOutlineSearch className="absolute text-gray-600 top-1/2 transform -translate-y-1/2 left-1" />
+						<input type="text" className="w-72 border rounded ps-5 py-1 text-sm" placeholder="Search by source name" />
+					</li>
 					<li>
 						<button
 							className={
@@ -96,8 +107,8 @@ function SourceList({ sourceType }) {
 					{sortedList.map((source) => (
 						<ListItem
 							key={source.id}
-							listId={source.id}
-							source={source.source}
+							item={source}
+							sourceType={sourceType}
 							setUpdate={setUpdate}
 							handleDelete={handleDelete}
 						/>
@@ -114,11 +125,11 @@ function SourceList({ sourceType }) {
 	);
 }
 
-function ListItem({ listId, source, setUpdate, handleDelete }) {
+function ListItem({ item, sourceType, setUpdate, handleDelete }) {
 	const editInputRef = useRef(null);
-	const [editing, setEditing] = useState(source === null);
-
-	const original = source;
+	const [editing, setEditing] = useState(item.source === null);
+	const [expanded, setExpanded] = useState(false);
+	const original = item.source;
 
 	const handleEditing = () => {
 		setEditing(true);
@@ -129,45 +140,67 @@ function ListItem({ listId, source, setUpdate, handleDelete }) {
 			console.log('no');
 			// ...
 		} else if (e.key === 'Enter' || e.currentTarget.id === 'confirm') {
-			setUpdate(editInputRef.current.value, listId);
+			setUpdate(editInputRef.current.value, item.id);
 			setEditing(false);
 		}
 	};
 
 	const handleCancel = () => {
-		setUpdate(original, listId);
+		setUpdate(original, item.id);
 		setEditing(false);
 	};
 
 	return (
-		<li className="flex justify-between border-b py-2">
+		<li className="flex flex-col border-b py-2">
 			{!editing && (
 				<>
-					<h2 className="hover:underline">
-						<Link to={`./${listId}`}>{source}</Link>
-					</h2>
-					<div className="flex items-center gap-2">
-						<button className="text-lg hover:text-blue-700">
-							<AiOutlineDownload />
-						</button>
-						<button className="text-lg hover:text-emerald-700" onClick={handleEditing}>
-							<AiOutlineEdit />
-						</button>
-						<button className="text-lg hover:text-red-700" onClick={() => handleDelete(listId)}>
-							<AiOutlineDelete />
-						</button>
+					<div className="flex justify-between">
+						<h2
+							className="flex items-center gap-1 cursor-pointer hover:underline"
+							onClick={() => setExpanded(!expanded)}
+						>
+							{expanded ? <AiOutlineUp /> : <AiOutlineDown />}
+							{item.source}
+						</h2>
+						<div className="flex items-center gap-2">
+							<button className="text-lg hover:text-blue-700">
+								<AiOutlineDownload />
+							</button>
+							<button className="text-lg hover:text-emerald-700" onClick={handleEditing}>
+								<AiOutlineEdit />
+							</button>
+							<button className="text-lg hover:text-red-700" onClick={() => handleDelete(item.id)}>
+								<AiOutlineDelete />
+							</button>
+						</div>
 					</div>
+
+					{expanded && (
+						<div className="p-2 ml-3 flex flex-col text-sm border-t">
+							<p className="flex gap-1 items-center">
+								<AiOutlineNumber /> Total {sourceType.toLowerCase()}: {item[sourceType.toLowerCase()].length}
+							</p>
+
+							<p className="flex gap-1 items-center">
+								<AiOutlineClockCircle /> Last updated: {item.lastUpdated || 'Unknown'}
+							</p>
+
+							<Link to={`./${item.id}`} className="border rounded px-2 py-1 mt-2 text-sm w-max hover:bg-gray-100">
+								View
+							</Link>
+						</div>
+					)}
 				</>
 			)}
 
 			{editing && (
-				<>
+				<div className="flex">
 					<input
 						type="text"
 						className="flex-1 me-2 border rounded p-1"
 						ref={editInputRef}
 						autoFocus={true}
-						defaultValue={source}
+						defaultValue={item.source}
 						onKeyDown={handleUpdateDone}
 					/>
 					<div className="flex items-center gap-2">
@@ -178,7 +211,7 @@ function ListItem({ listId, source, setUpdate, handleDelete }) {
 							<AiOutlineClose />
 						</button>
 					</div>
-				</>
+				</div>
 			)}
 		</li>
 	);
