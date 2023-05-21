@@ -1,7 +1,9 @@
-import { useRoutes } from 'react-router-dom';
 import Home from './Home';
-import SourceList from './SourceList';
-import SourceForm from './SourceForm';
+import Monsters from './Monsters';
+import Spells from './Spells';
+import Items from './Items';
+import NotFound from './NotFound';
+import { useRoutes } from 'react-router-dom';
 
 const Routes = () => {
 	const element = useRoutes([
@@ -14,11 +16,7 @@ const Routes = () => {
 			children: [
 				{
 					index: true,
-					element: <SourceList sourceType={'Monsters'} />,
-				},
-				{
-					path: 'new',
-					element: <SourceForm sourceType={'Monsters'} />,
+					element: <Monsters />,
 				},
 			],
 		},
@@ -27,11 +25,7 @@ const Routes = () => {
 			children: [
 				{
 					index: true,
-					element: <SourceList sourceType={'Spells'} />,
-				},
-				{
-					path: 'new',
-					element: <SourceForm sourceType={'Spells'} />,
+					element: <Spells />,
 				},
 			],
 		},
@@ -40,13 +34,13 @@ const Routes = () => {
 			children: [
 				{
 					index: true,
-					element: <SourceList sourceType={'Items'} />,
-				},
-				{
-					path: 'new',
-					element: <SourceForm sourceType={'Items'} />,
+					element: <Items />,
 				},
 			],
+		},
+		{
+			path: '*',
+			element: <NotFound />,
 		},
 	]);
 

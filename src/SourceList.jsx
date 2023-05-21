@@ -1,4 +1,7 @@
-import { useRef, useState } from 'react';
+import useLocalStorage from './hooks/useLocalStorage';
+import { useEffect, useRef, useState } from 'react';
+import { sortBy } from 'lodash';
+import { Link } from 'react-router-dom';
 import {
 	AiOutlinePlus,
 	AiOutlineEdit,
@@ -6,41 +9,39 @@ import {
 	AiOutlineDownload,
 	AiOutlineClose,
 	AiOutlineCheck,
+	AiOutlineImport,
+	AiOutlineArrowDown,
+	AiOutlineArrowUp,
 } from 'react-icons/ai';
-// import { useNavigate } from 'react-router-dom';
 
-const testSources = [
-	{
-		id: 1,
-		source: 'source 1',
-	},
-	{
-		id: 2,
-		source: 'source 2',
-	},
-	{
-		id: 3,
-		source: 'source 3',
-	},
-	{
-		id: 4,
-		source: 'source 4',
-	},
-	{
-		id: 5,
-		source: 'source 5',
-	},
-];
+const SORTS = {
+	NONE: (list) => list,
+	SOURCE_ALPHA: (list) => sortBy(list, 'source'),
+	SOURCE_ALPHA_REV: (list) => sortBy(list, 'source').reverse(),
+};
 
 function SourceList({ sourceType }) {
-	const [sources, setSources] = useState(testSources);
-	// const navigate = useNavigate();
+	const [sources, setSources] = useLocalStorage(sourceType.toLowerCase(), []);
+	const [sort, setSort] = useState('NONE');
+
+	const handleSort = (sortKey) => {
+		setSort(sortKey);
+	};
+
+	const sortFunction = SORTS[sort];
+	const sortedList = sortFunction(sources);
+
+	const handleImport = () => {
+		console.log('import');
+		// ...
+	};
 
 	const handleNew = () => {
 		setSources([
 			{
-				source: 'New Source',
+				source: null,
 				id: crypto.randomUUID(),
+				[sourceType.toLowerCase()]: [],
 			},
 			...sources,
 		]);
@@ -66,16 +67,33 @@ function SourceList({ sourceType }) {
 			<section className="flex justify-between items-center mb-2">
 				<h1 className="text-xl">{sourceType}</h1>
 				<button
-					className="bg-emerald-700 rounded text-white px-2 py-1 text-sm hover:bg-emerald-800"
-					onClick={handleNew}
+					className="flex gap-2 items-center bg-emerald-700 rounded text-white px-2 py-1 text-sm hover:bg-emerald-800"
+					onClick={handleImport}
 				>
-					<AiOutlinePlus />
+					<AiOutlineImport /> Import
 				</button>
 			</section>
 
+			<span className="my-2">
+				<ul>
+					<li>
+						<button
+							className={
+								sort.match(/SOURCE_ALPHA|SOURCE_ALPHA_REV/)
+									? 'flex gap-1 items-center border rounded p-1 text-gray-500 text-sm bg-gray-100'
+									: 'flex gap-1 items-center border rounded p-1 text-gray-500 text-sm'
+							}
+							onClick={() => handleSort(sort === 'SOURCE_ALPHA' ? 'SOURCE_ALPHA_REV' : 'SOURCE_ALPHA')}
+						>
+							Source {sort === 'SOURCE_ALPHA' ? <AiOutlineArrowDown /> : <AiOutlineArrowUp />}
+						</button>
+					</li>
+				</ul>
+			</span>
+
 			<section className="border rounded px-2 flex-1">
 				<ul>
-					{sources.map((source) => (
+					{sortedList.map((source) => (
 						<ListItem
 							key={source.id}
 							listId={source.id}
@@ -98,7 +116,8 @@ function SourceList({ sourceType }) {
 
 function ListItem({ listId, source, setUpdate, handleDelete }) {
 	const editInputRef = useRef(null);
-	const [editing, setEditing] = useState(false);
+	const [editing, setEditing] = useState(source === null);
+
 	const original = source;
 
 	const handleEditing = () => {
@@ -106,7 +125,10 @@ function ListItem({ listId, source, setUpdate, handleDelete }) {
 	};
 
 	const handleUpdateDone = (e) => {
-		if (e.key === 'Enter' || e.currentTarget.id === 'confirm') {
+		if (editInputRef.current.value === '') {
+			console.log('no');
+			// ...
+		} else if (e.key === 'Enter' || e.currentTarget.id === 'confirm') {
 			setUpdate(editInputRef.current.value, listId);
 			setEditing(false);
 		}
@@ -121,7 +143,9 @@ function ListItem({ listId, source, setUpdate, handleDelete }) {
 		<li className="flex justify-between border-b py-2">
 			{!editing && (
 				<>
-					<h2>{source}</h2>
+					<h2 className="hover:underline">
+						<Link to={`./${listId}`}>{source}</Link>
+					</h2>
 					<div className="flex items-center gap-2">
 						<button className="text-lg hover:text-blue-700">
 							<AiOutlineDownload />
