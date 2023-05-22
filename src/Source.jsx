@@ -80,7 +80,7 @@ function Source({ sourceType }) {
 					<h1 className="text-lg">{source.source}</h1>
 				</section>
 
-				<span className="my-2">
+				<span className="my-2 flex-wrap">
 					<ul className="flex flex-1 items-center gap-2">
 						<li className="relative">
 							<AiOutlineSearch className="absolute text-gray-600 top-1/2 transform -translate-y-1/2 left-1" />
