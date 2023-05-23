@@ -44,7 +44,9 @@ function SidebarLink({ children, to }) {
 			to={to}
 			className={({ isActive }) => (isActive ? 'font-bold text-emerald-700 flex-1 gap-2' : 'flex-1 gap-2')}
 		>
-			<span className="flex gap-2 items-center hover:bg-gray-100 hover:font-bold px-2 sm:p-2 rounded">{children}</span>
+			<span className="flex gap-2 items-center hover:bg-[var(--background-secondary)] hover:font-bold px-2 sm:p-2 rounded">
+				{children}
+			</span>
 		</NavLink>
 	);
 }

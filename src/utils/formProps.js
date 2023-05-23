@@ -7,31 +7,53 @@ export const actionProps = [
 		required: true,
 	},
 	{
+		name: 'attack_bonus',
+		type: 'number',
+		placeholder: '#',
+		min: -10,
+		max: 50,
+	},
+	{
 		name: 'damage_dice',
 		placeholder: '#d#',
 		minLength: 3,
 		maxLength: 5,
 	},
 	{
+		name: 'damage_bonus',
+		type: 'number',
+		placeholder: '#',
+		min: -10,
+		max: 50,
+	},
+	{
 		name: 'desc',
-		placeholder: 'description',
+		type: 'textarea',
+		placeholder: 'Description',
 		fullWidth: true,
 		minLength: 1,
 		required: true,
 	},
+];
+
+export const specialAbilityProps = [
 	{
-		name: 'attack_bonus',
-		type: 'number',
-		placeholder: '#',
-		min: 0,
-		max: 50,
+		name: 'name',
+		placeholder: 'Special ability name',
+		fullWidth: true,
+		minLength: 1,
+		maxLength: 128,
+		required: true,
 	},
 	{
-		name: 'damage_bonus',
-		type: 'number',
-		placeholder: '#',
-		min: 0,
-		max: 50,
+		name: 'desc',
+		type: 'textarea',
+		placeholder:
+			'If ability includes spells, wrap each spell with [spell]<spell name>[/spell].\n\nHighlight the spell and quick-add with CMD/CTRL + Shift + S',
+		rows: 4,
+		fullWidth: true,
+		minLength: 1,
+		required: true,
 	},
 ];
 
@@ -161,6 +183,10 @@ export const monsterProps = [
 		required: true,
 	},
 	{
+		name: 'Ability Scores',
+		breakpoint: true,
+	},
+	{
 		name: 'strength',
 		type: 'number',
 		placeholder: '#',
@@ -209,6 +235,10 @@ export const monsterProps = [
 		required: true,
 	},
 	{
+		name: 'Saving Throws',
+		breakpoint: true,
+	},
+	{
 		name: 'strength_save',
 		type: 'number',
 		placeholder: '#',
@@ -249,6 +279,10 @@ export const monsterProps = [
 		placeholder: '#',
 		min: 0,
 		max: 10,
+	},
+	{
+		name: 'Skills',
+		breakpoint: true,
 	},
 	{
 		name: 'acrobatics',
@@ -377,6 +411,10 @@ export const monsterProps = [
 		max: 10,
 	},
 	{
+		name: 'Other',
+		breakpoint: true,
+	},
+	{
 		name: 'damage_vulnerabilities',
 		placeholder: 'poison, stun, ...',
 	},
@@ -407,10 +445,18 @@ export const monsterProps = [
 		required: true,
 	},
 	{
+		name: 'Special Abilities',
+		breakpoint: true,
+	},
+	{
 		name: 'special_abilities',
 		type: 'nested',
 		fullWidth: true,
-		properties: actionProps,
+		properties: specialAbilityProps,
+	},
+	{
+		name: 'Actions',
+		breakpoint: true,
 	},
 	{
 		name: 'actions',
@@ -419,10 +465,18 @@ export const monsterProps = [
 		properties: actionProps,
 	},
 	{
+		name: 'Reactions',
+		breakpoint: true,
+	},
+	{
 		name: 'reactions',
 		type: 'nested',
 		fullWidth: true,
 		properties: actionProps,
+	},
+	{
+		name: 'Legendary Actions',
+		breakpoint: true,
 	},
 	{
 		name: 'legendary_actions',
