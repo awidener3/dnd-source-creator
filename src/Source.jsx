@@ -30,6 +30,7 @@ function Source({ sourceType }) {
 	const { sourceId } = useParams();
 	const [sort, setSort] = useState('NONE');
 	const [formVisible, setFormVisible] = useState(false);
+	const [editId, setEditId] = useState(null);
 	const [sources, setSources] = useLocalStorage(sourceType.toLowerCase(), []);
 
 	const source = sources.find((source) => source.id === sourceId);
@@ -55,16 +56,14 @@ function Source({ sourceType }) {
 		//...
 	};
 
-	const handleEditing = () => {
+	const handleEditing = (id) => {
 		console.log('handle edit...');
-
-		// ...
+		setEditId(id);
+		setFormVisible(true);
 	};
 
 	const removeItem = () => {
 		console.log('handle delete...');
-
-		//...
 	};
 
 	return (
@@ -141,7 +140,17 @@ function Source({ sourceType }) {
 				</ul>
 			</section>
 
-			{formVisible && <Form setFormVisible={setFormVisible} addItem={addItem} properties={monsterProps} />}
+			{formVisible && (
+				<Form
+					setFormVisible={setFormVisible}
+					addItem={addItem}
+					properties={monsterProps}
+					storageKey={sourceType}
+					sourceId={sourceId}
+					editId={editId}
+					setEditId={setEditId}
+				/>
+			)}
 		</>
 	);
 }
@@ -157,7 +166,7 @@ function ListItem({ item, sourceType, removeItem, handleEditing }) {
 					{item.name}
 				</h2>
 				<div className="flex items-center gap-2">
-					<button className="text-lg hover:text-emerald-700" onClick={handleEditing}>
+					<button className="text-lg hover:text-emerald-700" onClick={() => handleEditing(item.id)}>
 						<AiOutlineEdit />
 					</button>
 					<button className="text-lg hover:text-red-700" onClick={() => removeItem(item.id)}>

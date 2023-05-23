@@ -1,25 +1,35 @@
 import { useForm, useFieldArray } from 'react-hook-form';
-import { actionDefaults } from './utils/formProps';
-import { cleanObject } from './utils';
+import { actionDefaults, monsterDefaults } from './utils/formProps';
+import { cleanObject, getLocalStorageItemById } from './utils';
 import _ from 'lodash';
 import { AiOutlinePlus, AiOutlineDelete } from 'react-icons/ai';
 
-function Form({ setFormVisible, addItem, properties }) {
-	const { control, register, handleSubmit } = useForm();
+function Form({ setFormVisible, addItem, properties, storageKey, sourceId, editId, setEditId }) {
+	const { control, register, handleSubmit, reset } = useForm({ values: getValues(), defaultValues: monsterDefaults });
+
+	function getValues() {
+		const sources = getLocalStorageItemById(storageKey, sourceId);
+		return sources[storageKey].find((item) => item.id === editId);
+	}
 
 	const onSubmit = (data) => {
 		data.id = crypto.randomUUID();
 		addItem(cleanObject(data));
+		setFormVisible(false);
+		setEditId(null);
+		reset({ values: monsterDefaults });
+	};
+
+	const handleCloseForm = () => {
+		setEditId(null);
+		reset({ values: monsterDefaults });
 		setFormVisible(false);
 	};
 
 	return (
 		<>
 			{/* shade */}
-			<div
-				className="absolute inset-0 bg-gray-400 bg-opacity-75 transition-opacity"
-				onClick={() => setFormVisible(false)}
-			></div>
+			<div className="absolute inset-0 bg-gray-400 bg-opacity-75 transition-opacity" onClick={handleCloseForm}></div>
 
 			{/* modal */}
 			<article className="absolute inset-0 z-10 overflow-y-auto bg-[var(--background-color)] m-10 w-11/12 rounded mx-auto flex flex-col">
